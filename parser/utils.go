@@ -34,8 +34,8 @@ func StripComments(src string) string {
 }
 
 func ReadAllFromFileOrStdin(args []string) (string, error) {
-	if len(args) >= 2 {
-		path := args[1]
+	if len(args) >= 1 {
+		path := args[0]
 		b, err := os.ReadFile(path)
 		if err != nil {
 			return "", err

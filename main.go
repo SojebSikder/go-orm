@@ -8,8 +8,40 @@ import (
 	"github.com/sojebsikder/go-orm/parser"
 )
 
+var version = "0.1.0"
+var appName = "go-orm"
+
+func showUsage() {
+	fmt.Printf("Usage:\n")
+	fmt.Printf("  %s run <file>\n\n", appName)
+	fmt.Printf("  %s help\n", appName)
+	fmt.Printf("  %s version\n", appName)
+}
+
 func main() {
-	src, err := parser.ReadAllFromFileOrStdin(os.Args)
+	if len(os.Args) < 2 {
+		showUsage()
+		return
+	}
+
+	cmd := os.Args[1]
+
+	switch cmd {
+	case "run":
+		run(os.Args[2:])
+	case "help":
+		showUsage()
+	case "version":
+		fmt.Printf("%s version %s\n", appName, version)
+	default:
+		fmt.Println("Unknown command:", cmd)
+		fmt.Printf("Use '%s help' to see available commands.", appName)
+		os.Exit(1)
+	}
+}
+
+func run(args []string) {
+	src, err := parser.ReadAllFromFileOrStdin(args)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error reading schema: %v\n", err)
 		os.Exit(2)
@@ -20,13 +52,6 @@ func main() {
 		fmt.Fprintf(os.Stderr, "parse error: %v\n", err)
 		os.Exit(3)
 	}
-
-	// enc := json.NewEncoder(os.Stdout)
-	// enc.SetIndent("", "  ")
-	// if err := enc.Encode(ast); err != nil {
-	// 	fmt.Fprintf(os.Stderr, "json encode error: %v\n", err)
-	// 	os.Exit(4)
-	// }
 
 	// Open file for writing JSON
 	outFile, err := os.Create("schema.json")

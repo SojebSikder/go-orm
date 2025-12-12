@@ -3,5 +3,10 @@ ORM created using Go. It's convert prisma schema to migrations file.
 
 ## Usage
 ```bash
-go run . schema.prisma
+go-orm run schema.prisma
 ```
+
+## Features
+- [x] Convert Prisma schema to json file
+- [ ] Generate migration files
+- [ ] Apply migrations to database
