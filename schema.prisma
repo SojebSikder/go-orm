@@ -1,0 +1,10 @@
+model Note {
+  id                String  @id @default(cuid())
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now())
+
+  title String?
+  body  String?
+
+  @@map("posts")
+}
