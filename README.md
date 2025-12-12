@@ -1,7 +1,7 @@
 ## Description
-ORM created using Go.
+ORM created using Go. It's convert prisma schema to migrations file.
 
 ## Usage
 ```bash
-go run ./cmd/ormgen --schema ./schema.prisma --out ./generated
+go run . schema.prisma
 ```
