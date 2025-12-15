@@ -8,5 +8,5 @@ go-orm run schema.prisma
 
 ## Features
 - [x] Convert Prisma schema to json file
-- [ ] Generate migration files
+- [x] Generate migration files
 - [ ] Apply migrations to database
