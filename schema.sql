@@ -1,5 +1,12 @@
 -- Auto-generated PostgreSQL schema
 
+CREATE TYPE message_status AS ENUM (
+  'PENDING',
+  'SENT',
+  'DELIVERED',
+  'READ'
+);
+
 CREATE TABLE accounts (
   id TEXT NOT NULL DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),

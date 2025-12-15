@@ -23,12 +23,38 @@ func (g *PostgreSQLGenerator) Generate() string {
 	out.WriteString("-- Auto-generated PostgreSQL schema\n\n")
 	// out.WriteString("CREATE EXTENSION IF NOT EXISTS \"pgcrypto\";\n\n")
 
+	// Enums
+	for _, e := range g.schema.Enums {
+		out.WriteString(g.generateEnum(e))
+		out.WriteString("\n")
+	}
+
+	// Tables
 	for _, m := range g.schema.Models {
 		out.WriteString(g.generateModel(m))
 		out.WriteString("\n")
 	}
 
 	return out.String()
+}
+
+func (g *PostgreSQLGenerator) generateEnum(e parser.Enum) string {
+	var sb strings.Builder
+
+	sb.WriteString(fmt.Sprintf(
+		"CREATE TYPE %s AS ENUM (\n",
+		snake(e.Name),
+	))
+
+	values := []string{}
+	for _, v := range e.Values {
+		values = append(values, fmt.Sprintf("  '%s'", v))
+	}
+
+	sb.WriteString(strings.Join(values, ",\n"))
+	sb.WriteString("\n);\n")
+
+	return sb.String()
 }
 
 func (g *PostgreSQLGenerator) generateModel(m parser.Model) string {
