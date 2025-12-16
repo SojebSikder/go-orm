@@ -1,10 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"os"
 
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/sojebsikder/go-orm/generator"
+	"github.com/sojebsikder/go-orm/migrator"
 	"github.com/sojebsikder/go-orm/parser"
 )
 
@@ -29,6 +32,8 @@ func main() {
 	switch cmd {
 	case "run":
 		run(os.Args[2:])
+	case "apply":
+		runApply()
 	case "help":
 		showUsage()
 	case "version":
@@ -58,7 +63,7 @@ func run(args []string) {
 	g := generator.NewPostgreSQLGenerator(ast)
 
 	// Open file for writing SQL
-	outFile, err := os.Create("schema.sql")
+	outFile, err := os.Create("migrations/migration.sql")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error creating sql file: %v\n", err)
 		os.Exit(6)
@@ -71,4 +76,31 @@ func run(args []string) {
 	}
 
 	fmt.Println("Schema saved to schema.sql")
+}
+
+func runApply() {
+	db := openDB()
+	defer db.Close()
+
+	m := migrator.NewMigrator(db, "migrations")
+	if err := m.Apply(); err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Migrations applied successfully")
+}
+
+func openDB() *sql.DB {
+	dsn := "postgres://postgres:root@localhost:5432/testdemo?sslmode=disable"
+
+	db, err := sql.Open("pgx", dsn)
+	if err != nil {
+		panic(err)
+	}
+
+	if err := db.Ping(); err != nil {
+		panic(err)
+	}
+
+	return db
 }
