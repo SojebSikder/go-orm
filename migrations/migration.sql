@@ -7,25 +7,6 @@ CREATE TYPE message_status AS ENUM (
   'READ'
 );
 
-CREATE TABLE accounts (
-  id TEXT NOT NULL DEFAULT gen_random_uuid(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  user_id TEXT NOT NULL,
-  type TEXT NULL,
-  provider TEXT NULL,
-  provider_account_id TEXT NULL,
-  refresh_token TEXT NULL,
-  access_token TEXT NULL,
-  expires_at TIMESTAMPTZ NULL,
-  token_type TEXT NULL,
-  scope TEXT NULL,
-  id_token TEXT NULL,
-  session_state TEXT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
 CREATE TABLE users (
   id TEXT NOT NULL DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -56,6 +37,25 @@ CREATE TABLE users (
   is_two_factor_enabled INTEGER NULL,
   two_factor_secret TEXT NULL,
   PRIMARY KEY (id)
+);
+
+CREATE TABLE accounts (
+  id TEXT NOT NULL DEFAULT gen_random_uuid(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  user_id TEXT NOT NULL,
+  type TEXT NULL,
+  provider TEXT NULL,
+  provider_account_id TEXT NULL,
+  refresh_token TEXT NULL,
+  access_token TEXT NULL,
+  expires_at TIMESTAMPTZ NULL,
+  token_type TEXT NULL,
+  scope TEXT NULL,
+  id_token TEXT NULL,
+  session_state TEXT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE ucodes (
@@ -170,18 +170,14 @@ CREATE TABLE payment_transactions (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE messages (
+CREATE TABLE conversations (
   id TEXT NOT NULL DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ NULL,
-  sender_id TEXT NULL,
-  receiver_id TEXT NULL,
-  conversation_id TEXT NULL,
-  attachment_id TEXT NULL,
-  message TEXT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
+  creator_id TEXT NULL,
+  participant_id TEXT NULL,
+  PRIMARY KEY (id)
 );
 
 CREATE TABLE attachments (
@@ -197,14 +193,18 @@ CREATE TABLE attachments (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE conversations (
+CREATE TABLE messages (
   id TEXT NOT NULL DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ NULL,
-  creator_id TEXT NULL,
-  participant_id TEXT NULL,
-  PRIMARY KEY (id)
+  sender_id TEXT NULL,
+  receiver_id TEXT NULL,
+  conversation_id TEXT NULL,
+  attachment_id TEXT NULL,
+  message TEXT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
 );
 
 CREATE TABLE faqs (

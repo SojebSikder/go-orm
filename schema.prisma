@@ -13,29 +13,6 @@ datasource db {
   provider = "postgresql"
 }
 
-model Account {
-  id         String   @id @default(cuid())
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
-
-  user_id String
-  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
-  type                String?
-  provider            String?
-  provider_account_id String?
-  refresh_token       String?
-  access_token        String?
-  expires_at          DateTime?
-  token_type          String?
-  scope               String?
-  id_token            String?
-  session_state       String?
-
-  @@unique([provider, provider_account_id])
-  @@map("accounts")
-}
-
 model User {
   id         String    @id @default(cuid())
   created_at DateTime  @default(now())
@@ -90,6 +67,30 @@ model User {
 
   @@map("users")
 }
+
+model Account {
+  id         String   @id @default(cuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  type                String?
+  provider            String?
+  provider_account_id String?
+  refresh_token       String?
+  access_token        String?
+  expires_at          DateTime?
+  token_type          String?
+  scope               String?
+  id_token            String?
+  session_state       String?
+
+  @@unique([provider, provider_account_id])
+  @@map("accounts")
+}
+
 
 model Ucode {
   id         String   @id @default(cuid())
@@ -264,6 +265,42 @@ enum MessageStatus {
   READ
 }
 
+// this table stores conversation
+model Conversation {
+  id         String    @id @default(cuid())
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now())
+  deleted_at DateTime?
+
+  creator_id String?
+  creator    User?   @relation("creator", fields: [creator_id], references: [id])
+
+  participant_id String?
+  participant    User?   @relation("participant", fields: [participant_id], references: [id])
+
+  messages Message[]
+
+  @@map("conversations")
+}
+
+// this table stores attachment of message
+model Attachment {
+  id         String    @id @default(cuid())
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now())
+  deleted_at DateTime?
+
+  name     String?
+  type     String?
+  size     Int?
+  file     String?
+  file_alt String?
+
+  messages Message[]
+
+  @@map("attachments")
+}
+
 // message is used for conversation
 model Message {
   id         String    @id @default(cuid())
@@ -288,42 +325,6 @@ model Message {
   message String?
 
   @@map("messages")
-}
-
-// this table stores attachment of message
-model Attachment {
-  id         String    @id @default(cuid())
-  created_at DateTime  @default(now())
-  updated_at DateTime  @default(now())
-  deleted_at DateTime?
-
-  name     String?
-  type     String?
-  size     Int?
-  file     String?
-  file_alt String?
-
-  messages Message[]
-
-  @@map("attachments")
-}
-
-// this table stores conversation
-model Conversation {
-  id         String    @id @default(cuid())
-  created_at DateTime  @default(now())
-  updated_at DateTime  @default(now())
-  deleted_at DateTime?
-
-  creator_id String?
-  creator    User?   @relation("creator", fields: [creator_id], references: [id])
-
-  participant_id String?
-  participant    User?   @relation("participant", fields: [participant_id], references: [id])
-
-  messages Message[]
-
-  @@map("conversations")
 }
 
 // ---------End Chat schema---------
