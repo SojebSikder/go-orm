@@ -10,7 +10,7 @@ type Column struct {
 
 func LoadSchema(db *sql.DB) (map[string][]Column, error) {
 	rows, err := db.Query(`
-		SELECT table_name, column_name, data_type, is_nullable, is_nullable
+		SELECT table_name, column_name, data_type, is_nullable
 		FROM information_schema.columns
 		WHERE table_schema = 'public'
 	`)
