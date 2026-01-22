@@ -5,7 +5,9 @@ before:
     - go mod tidy
 
 builds:
-  - env:
+  - id: go-orm
+    main: ./cmd
+    env:
       - CGO_ENABLED=0
     mod_timestamp: "{{ .CommitTimestamp }}"
     flags:
