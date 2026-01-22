@@ -91,7 +91,10 @@ func runApply() {
 }
 
 func openDB() *sql.DB {
-	dsn := "postgres://postgres:root@localhost:5432/testdemo?sslmode=disable"
+	dsn := os.Getenv("DATABASE_URL")
+	if dsn == "" {
+		panic("DATABASE_URL environment variable is not set")
+	}
 
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {
