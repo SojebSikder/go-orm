@@ -1,5 +1,10 @@
 package parser
 
+import (
+	"fmt"
+	"os"
+)
+
 func ParseSchema(src string) (*SchemaAST, error) {
 	clean := StripComments(src)
 	toks := Tokenize(clean)
@@ -37,5 +42,18 @@ func ParseSchema(src string) (*SchemaAST, error) {
 			ps.next()
 		}
 	}
+
+	if err := ValidateSchema(ast); err != nil {
+		fmt.Fprintf(os.Stderr, "parse error: %v\n", err)
+		os.Exit(3)
+	}
+
 	return ast, nil
+}
+
+func ValidateSchema(ast *SchemaAST) error {
+	if len(ast.Generators) == 0 {
+		return fmt.Errorf("schema must contain at least one generator block")
+	}
+	return nil
 }
